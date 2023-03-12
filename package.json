@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.5.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mdx-js/react": "^2.3.0",
+    "framer-motion": "^10.2.4",
+    "mongodb": "^4.8.1",
+    "next": "latest",
+    "next-mdx-remote": "^4.4.1",
+    "random-word-slugs": "^0.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "^8.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "18.7.5",
+    "@types/react": "16.9.17",
+    "typescript": "4.6.3"
+  }
+}

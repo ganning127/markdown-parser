@@ -20,19 +20,33 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDisclosure } from "@chakra-ui/react";
 import { Components } from "../components/MDXComponents";
+import { Footer } from "../components/Footer";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
+import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { SimpleSidebar } from "../components/Sidebar";
 
 export default function Home() {
-  const router = useRouter();
   const [content, setContent] = useState("");
   const [url, setUrl] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const onShare = async () => {
     onOpen();
     setUrl("");
 
     const endpoint = "/api/create-note";
-    const data = { content: content };
+    const data = {
+      content: content,
+      owner: user.id,
+    };
     const options = {
       method: "POST",
       headers: {
@@ -48,34 +62,39 @@ export default function Home() {
 
   return (
     <>
-      <Container maxW="container.2xl">
-        <Flex alignItems="center" justifyContent="space-between">
-          <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
-            Markdown Editor
-          </Heading>
+      <SimpleSidebar>
+        <Container maxW="container.2xl">
+          <Flex alignItems="center" justifyContent="space-between">
+            <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
+              Markdown Editor
+            </Heading>
 
-          <Button onClick={onShare} bg="blue.400" color="white">
-            Share Note
-          </Button>
-        </Flex>
-        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} height="100vh">
-          <Box>
-            <Textarea
-              border="2px solid gray"
-              value={content}
-              rounded="md"
-              height="100vh"
-              placeholder="# type your markdown here"
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </Box>
-          <Box>
-            <ReactMarkdown components={Components}>
-              {content ? content : "preview will appear here"}
-            </ReactMarkdown>
-          </Box>
-        </SimpleGrid>
-      </Container>
+            <Button onClick={onShare} bg="blue.400" color="white">
+              <Text mr={4}>Share Note</Text>
+              <UserButton />
+            </Button>
+          </Flex>
+          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} height="100vh">
+            <Box>
+              <Textarea
+                border="2px solid gray"
+                value={content}
+                rounded="md"
+                height="100vh"
+                placeholder="# type your markdown here"
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </Box>
+            <Box>
+              <ReactMarkdown components={Components}>
+                {content ? content : "preview will appear here"}
+              </ReactMarkdown>
+            </Box>
+          </SimpleGrid>
+        </Container>
+      </SimpleSidebar>
+
+      <Footer />
 
       {/* SHARE BUTTON */}
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -91,7 +110,7 @@ export default function Home() {
             <ModalCloseButton />
             {url ? (
               <>
-                <Text bg="gray.100" py={1} px={2} rounded="true">
+                <Text bg="gray.100" py={1} px={2} rounded="md">
                   {"https://markdown-parser-roan.vercel.app/"}
                   note/
                   {url}

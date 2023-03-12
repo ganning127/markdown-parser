@@ -3,6 +3,26 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { useColorMode } from "@chakra-ui/react";
 import { Global, css } from "@emotion/react";
 import { useEffect } from "react";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  RedirectToSignIn,
+} from "@clerk/nextjs";
+import { useRouter } from "next/router";
+
+//  List pages you want to be publicly accessible, or leave empty if
+//  every page requires authentication. Use this naming strategy:
+//   "/"              for pages/index.js
+//   "/foo"           for pages/foo/index.js
+//   "/foo/bar"       for pages/foo/bar.js
+//   "/foo/[...bar]"  for pages/foo/[...bar].js
+const publicPages = [
+  "/",
+  "/note/[slug]",
+  "/sign-in/[[...index]]",
+  "/sign-up/[[...index]]",
+];
 
 function ForceLightMode({ children }) {
   // force light mode b/c of ChakraUI bug
@@ -17,7 +37,6 @@ function ForceLightMode({ children }) {
 }
 
 const GlobalStyle = ({ children }) => {
-  let { colorMode } = useColorMode();
   return (
     <>
       <Global
@@ -40,11 +59,29 @@ const GlobalStyle = ({ children }) => {
 };
 
 function MyApp({ Component, pageProps }) {
+  // Get the pathname
+  const { pathname } = useRouter();
+
+  // Check if the current route matches a public page
+  const isPublicPage = publicPages.includes(pathname);
   return (
     <ChakraProvider>
       <GlobalStyle>
         <ForceLightMode>
-          <Component {...pageProps} />
+          <ClerkProvider {...pageProps}>
+            {isPublicPage ? (
+              <Component {...pageProps} />
+            ) : (
+              <>
+                <SignedIn>
+                  <Component {...pageProps} />
+                </SignedIn>
+                <SignedOut>
+                  <RedirectToSignIn />
+                </SignedOut>
+              </>
+            )}
+          </ClerkProvider>
         </ForceLightMode>
       </GlobalStyle>
     </ChakraProvider>

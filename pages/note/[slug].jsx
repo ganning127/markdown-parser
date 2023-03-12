@@ -10,24 +10,14 @@ import {
   CustomCode,
 } from "../../components/MDXComponents";
 import { Container } from "@chakra-ui/react";
-
-const components = {
-  h1: CustomHeading1,
-  h2: CustomHeading2,
-  h3: CustomHeading3,
-  img: CustomImage,
-  p: CustomParagraph,
-  code: CustomCode,
-};
+import { Footer } from "../../components/Footer";
+import { Components } from "../../components/MDXComponents";
 
 export default function Note({ mdxString }) {
-  const router = useRouter();
-  const { type } = router.query;
-
   return (
     <>
       <Container maxW="container.xl">
-        <ReactMarkdown components={components}>{mdxString}</ReactMarkdown>
+        <ReactMarkdown components={Components}>{mdxString}</ReactMarkdown>
       </Container>
     </>
   );

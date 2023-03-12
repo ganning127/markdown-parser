@@ -113,16 +113,18 @@ export default function Home() {
             </Box>
             <ModalCloseButton />
             <Text bg="gray.100" py={1} px={2} rounded="true">
-              {router.pathname}
+              {"https://markdown-parser-roan.vercel.app/"}
               note/
-              {url ? url : "loading URL"}
+              {url ? url : "loading..."}
             </Text>
             <Button
               mt={4}
               py={0}
               colorScheme="blue"
               onClick={() =>
-                navigator.clipboard.writeText(router.pathname + "note/" + url)
+                navigator.clipboard.writeText(
+                  "https://markdown-parser-roan.vercel.app/" + "note/" + url
+                )
               }
             >
               Copy

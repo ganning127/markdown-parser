@@ -38,7 +38,7 @@ export default function Home(props) {
       </Head>
 
       <SimpleSidebar>
-        <Container maxW="container.2xl" textAlign="center">
+        <Container maxW="container.2xl">
           <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
             Welcome back,{" "}
             <Text as="span" color="blue.600">
@@ -56,7 +56,8 @@ export default function Home(props) {
                 isExternal
               >
                 <Box
-                  p={5}
+                  py={3}
+                  px={5}
                   shadow="md"
                   borderWidth="1px"
                   borderRadius="md"
@@ -64,6 +65,16 @@ export default function Home(props) {
                     bg: "blue.50",
                   }}
                 >
+                  <Flex justifyContent="space-between" alignItems="center">
+                    <Heading size="md" fontWeight="black">
+                      {note.title}
+                    </Heading>
+
+                    <Text color="gray.400" my={2}>
+                      {new Date(note.updated_at).toLocaleString()}
+                    </Text>
+                  </Flex>
+
                   {note.content.slice(0, 50)}
                 </Box>
               </Link>
@@ -88,7 +99,6 @@ export const getServerSideProps = async ({ req }) => {
     // Then you can execute queries against your database like so:
     // db.find({}) or any of the MongoDB Node Driver commands
     const { userId } = await getAuth(req);
-    console.log("USERID:", userId);
 
     const client = await clientPromise;
     const db = await client.db("markdown-parser");

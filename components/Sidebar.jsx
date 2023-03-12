@@ -22,6 +22,7 @@ import {
   FiSettings,
   FiMenu,
 } from "react-icons/fi";
+import { UserButton } from "@clerk/nextjs";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, href: "/" },
@@ -74,6 +75,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           MP
         </Text>
+        <UserButton />
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (

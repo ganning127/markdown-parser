@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const client = await clientPromise;
   const db = await client.db("markdown-parser");
   const collection = await db.collection("notes");
-  let slug = "burly-melted-russia";
+  let slug = generateSlug();
 
   // check if slug is already in mongodb
   let isValidSlug = await checkValidSlug(slug, collection);
@@ -17,11 +17,13 @@ export default async function handler(req, res) {
   }
 
   const resp = await collection.insertOne({
+    title: req.body.title,
     content: req.body.content,
     slug: slug,
     views: 0,
     reading_time: 43,
     created_at: new Date(),
+    updated_at: new Date(),
     owner: req.body.owner,
   });
 

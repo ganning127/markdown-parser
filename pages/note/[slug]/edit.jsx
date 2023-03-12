@@ -1,5 +1,16 @@
+import ReactMarkdown from "react-markdown";
+import clientPromise from "../../../lib/mongodb";
 import { useRouter } from "next/router";
-
+import {
+  CustomHeading1,
+  CustomHeading2,
+  CustomHeading3,
+  CustomImage,
+  CustomParagraph,
+  CustomCode,
+} from "../../../components/MDXComponents";
+import { Components } from "../../../components/MDXComponents";
+import { useState } from "react";
 import {
   Box,
   Container,
@@ -16,12 +27,8 @@ import {
   ModalCloseButton,
   Spinner,
   Input,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import { useDisclosure } from "@chakra-ui/react";
-import { Components } from "../components/MDXComponents";
-import { Footer } from "../components/Footer";
 import {
   ClerkProvider,
   SignedIn,
@@ -30,21 +37,24 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
-import { SimpleSidebar } from "../components/Sidebar";
+import { SimpleSidebar } from "../../../components/Sidebar";
+import { Footer } from "../../../components/Footer";
 
-export default function Home() {
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
+export default function Note({ mdxString, noteTitle }) {
+  const [content, setContent] = useState(mdxString);
+  const [title, setTitle] = useState(noteTitle);
+  const [newURL, setNewURL] = useState(false);
   const [url, setUrl] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isLoaded, isSignedIn, user } = useUser();
 
+  const router = useRouter();
+  console.log(router.query.slug);
   const onShare = async () => {
     onOpen();
     setUrl("");
 
-    const endpoint = "/api/create-note";
+    const endpoint = "/api/update-or-create-note";
     let noteTitle = title;
     if (noteTitle === "") {
       noteTitle = "Untitled Note";
@@ -53,6 +63,7 @@ export default function Home() {
       content: content,
       owner: user.id,
       title: noteTitle,
+      slug: router.query.slug,
     };
     const options = {
       method: "POST",
@@ -65,6 +76,9 @@ export default function Home() {
     const res = await fetch(endpoint, options);
     const json = await res.json();
     setUrl(json.url);
+
+    console.log(json);
+    setNewURL(json.newURL);
   };
 
   return (
@@ -128,6 +142,13 @@ export default function Home() {
                   note/
                   {url}
                 </Text>
+
+                {newURL ? (
+                  <Text fontSize="sm" fontWeight="thin" color="gray.500" mt={2}>
+                    Since you're not the owner of the note, the edited note has
+                    been saved as a new note.
+                  </Text>
+                ) : null}
                 <Button
                   mt={4}
                   py={0}
@@ -151,31 +172,36 @@ export default function Home() {
   );
 }
 
-// export async function getStaticProps() {
-//   // MDX text - can be from a local file, database, anywhere
+export async function getServerSideProps(context) {
+  try {
+    const slug = context.params.slug;
 
-//   return { props: { source: mdxSource } };
-// }
+    const client = await clientPromise;
 
-// export async function getServerSideProps(context) {
-//   try {
-//     await clientPromise;
-//     // `await clientPromise` will use the default database passed in the MONGODB_URI
-//     // However you can use another database (e.g. myDatabase) by replacing the `await clientPromise` with the following code:
-//     //
-//     // `const client = await clientPromise`
-//     // `const db = client.db("myDatabase")`
-//     //
-//     // Then you can execute queries against your database like so:
-//     // db.find({}) or any of the MongoDB Node Driver commands
+    const db = await client.db("markdown-parser");
+    const collection = await db.collection("notes");
 
-//     return {
-//       props: { isConnected: true },
-//     };
-//   } catch (e) {
-//     console.error(e);
-//     return {
-//       props: { isConnected: false },
-//     };
-//   }
-// }
+    // get data from database about carbon monoxide
+    const allData = await collection
+      .find({
+        slug: slug,
+      })
+      .limit(1)
+      .toArray();
+
+    const data = allData[0];
+
+    return {
+      props: {
+        mdxString: data.content,
+        noteTitle: data.title,
+        success: true,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      props: { success: false },
+    };
+  }
+}

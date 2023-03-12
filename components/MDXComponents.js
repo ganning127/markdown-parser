@@ -23,3 +23,12 @@ export const CustomParagraph = (props) => {
 export const CustomCode = (props) => {
   return <Code colorScheme="blue" fontSize="md" {...props} />;
 };
+
+export const Components = {
+  h1: CustomHeading1,
+  h2: CustomHeading2,
+  h3: CustomHeading3,
+  img: CustomImage,
+  p: CustomParagraph,
+  code: CustomCode,
+};

@@ -7,38 +7,19 @@ import {
   Textarea,
   Heading,
   Text,
-  Img,
-  Code,
   Flex,
   Button,
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDisclosure } from "@chakra-ui/react";
-import {
-  CustomHeading1,
-  CustomHeading2,
-  CustomHeading3,
-  CustomImage,
-  CustomParagraph,
-  CustomCode,
-} from "../components/MDXComponents";
-
-const components = {
-  h1: CustomHeading1,
-  h2: CustomHeading2,
-  h3: CustomHeading3,
-  img: CustomImage,
-  p: CustomParagraph,
-  code: CustomCode,
-};
+import { Components } from "../components/MDXComponents";
 
 export default function Home() {
   const router = useRouter();
@@ -49,10 +30,6 @@ export default function Home() {
   const onShare = async () => {
     onOpen();
     setUrl("");
-
-    // call api to save note
-    // return id
-    // return url
 
     const endpoint = "/api/create-note";
     const data = { content: content };
@@ -93,7 +70,7 @@ export default function Home() {
             />
           </Box>
           <Box>
-            <ReactMarkdown components={components}>
+            <ReactMarkdown components={Components}>
               {content ? content : "preview will appear here"}
             </ReactMarkdown>
           </Box>
@@ -108,27 +85,33 @@ export default function Home() {
             <Box mb={4}>
               <Text fontWeight="bold">Share Note</Text>
               <Text fontSize="md" fontWeight="thin">
-                Share this link with your friends!
+                Share this unique link with your friends!
               </Text>
             </Box>
             <ModalCloseButton />
-            <Text bg="gray.100" py={1} px={2} rounded="true">
-              {"https://markdown-parser-roan.vercel.app/"}
-              note/
-              {url ? url : "loading..."}
-            </Text>
-            <Button
-              mt={4}
-              py={0}
-              colorScheme="blue"
-              onClick={() =>
-                navigator.clipboard.writeText(
-                  "https://markdown-parser-roan.vercel.app/" + "note/" + url
-                )
-              }
-            >
-              Copy
-            </Button>
+            {url ? (
+              <>
+                <Text bg="gray.100" py={1} px={2} rounded="true">
+                  {"https://markdown-parser-roan.vercel.app/"}
+                  note/
+                  {url}
+                </Text>
+                <Button
+                  mt={4}
+                  py={0}
+                  colorScheme="blue"
+                  onClick={() =>
+                    navigator.clipboard.writeText(
+                      "https://markdown-parser-roan.vercel.app/" + "note/" + url
+                    )
+                  }
+                >
+                  Copy
+                </Button>
+              </>
+            ) : (
+              <Spinner />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>

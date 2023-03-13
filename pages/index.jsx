@@ -6,6 +6,7 @@ import {
   Flex,
   SimpleGrid,
   Text,
+  HStack,
   Button,
 } from "@chakra-ui/react";
 import { Footer } from "../components/Footer";
@@ -18,7 +19,7 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
-
+import { NavBar } from "../components/NavBar";
 export default function Home(props) {
   return (
     <>
@@ -27,26 +28,77 @@ export default function Home(props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Container maxW="container.2xl" textAlign="center">
-        <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
-          Markdown Parser
-        </Heading>
+      <NavBar />
+      <Container maxW="container.xl" textAlign="center" mt={24}>
+        <Box mb={8}>
+          <Heading
+            fontWeight="black"
+            textAlign="center"
+            fontSize={{ base: "4xl", lg: "6xl" }}
+            my={4}
+            lineHeight={1.2}
+          >
+            The easiest way to share
+            <br />
+            <Text
+              as="span"
+              bgGradient="linear(to-l, blue.400, purple.400)"
+              bgClip="text"
+            >
+              markdown files
+            </Text>
+            .
+          </Heading>
 
-        <SignedIn>
-          <Greeting />
+          <Text color="gray.400" fontSize="xl" maxW="500px" mx="auto">
+            Markdown Parser is an markdown editor to create, share, and publish
+            markdown documents, all in{" "}
+            <Text as="span" fontWeight="bold">
+              your browser
+            </Text>
+            .
+          </Text>
+        </Box>
+        <Box>
+          <HStack justifyContent="center">
+            <Button
+              as="a"
+              href="https://github.com/ganning127/markdown-parser"
+              color="blue.400"
+              bg=""
+              // size="lg"
+              fontWeight="bold"
+              rounded="md"
+              px={4}
+              py={6}
+              fontSize="lg"
+              target="_blank"
+            >
+              GitHub
+            </Button>
 
-          <Button as="a" href="/new" bg="blue.400" color="white" mt={8}>
-            Create New Note
-          </Button>
-        </SignedIn>
-        <SignedOut>
-          <Button as="a" href="/sign-in" bg="blue.400" color="white">
-            Sign In
-          </Button>
-        </SignedOut>
+            <Button
+              as="a"
+              fontSize="lg"
+              href="/sign-in"
+              bg="blue.400"
+              color="white"
+              // size="lg"
+              fontWeight="bold"
+              rounded="md"
+              px={4}
+              py={6}
+              _hover={{
+                bg: "blue.500",
+              }}
+            >
+              Get Started
+            </Button>
+          </HStack>
+        </Box>
       </Container>
 
-      <Footer mt={16} />
+      <Footer mt={48} />
     </>
   );
 }

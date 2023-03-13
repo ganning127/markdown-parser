@@ -5,7 +5,7 @@ export const Footer = (props) => {
     <Box as="footer" {...props}>
       <Divider my={4} />
       <Text textAlign="center" fontSize="sm">
-        Made with ❤️ by Ganning Xu in {new Date().getFullYear()}.
+        &copy; Markdown Parser {new Date().getFullYear()}
       </Text>
     </Box>
   );

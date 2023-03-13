@@ -10,6 +10,24 @@ import {
   RedirectToSignIn,
 } from "@clerk/nextjs";
 import { useRouter } from "next/router";
+import "@fontsource/raleway/100.css";
+import "@fontsource/raleway/200.css";
+import "@fontsource/raleway/300.css";
+import "@fontsource/raleway/400.css";
+import "@fontsource/raleway/500.css";
+import "@fontsource/raleway/600.css";
+import "@fontsource/raleway/700.css";
+import "@fontsource/raleway/800.css";
+import "@fontsource/raleway/900.css";
+
+import { extendTheme } from "@chakra-ui/react";
+
+const theme = extendTheme({
+  fonts: {
+    heading: `'Raleway', sans-serif`,
+    body: `'Raleway', sans-serif`,
+  },
+});
 
 //  List pages you want to be publicly accessible, or leave empty if
 //  every page requires authentication. Use this naming strategy:
@@ -65,7 +83,7 @@ function MyApp({ Component, pageProps }) {
   // Check if the current route matches a public page
   const isPublicPage = publicPages.includes(pathname);
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <GlobalStyle>
         <ForceLightMode>
           <ClerkProvider {...pageProps}>

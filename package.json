@@ -10,6 +10,7 @@
     "@clerk/nextjs": "^4.11.7",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@fontsource/raleway": "^4.5.12",
     "@mdx-js/react": "^2.3.0",
     "framer-motion": "^10.2.4",
     "mongodb": "^4.8.1",

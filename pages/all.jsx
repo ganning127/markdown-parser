@@ -1,6 +1,5 @@
 import Head from "next/head";
 import clientPromise from "../lib/mongodb";
-
 import {
   Container,
   Heading,
@@ -9,18 +8,10 @@ import {
   SimpleGrid,
   Link,
   Text,
-  Button,
 } from "@chakra-ui/react";
 import { Footer } from "../components/Footer";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { useUser } from "@clerk/nextjs";
+import { getAuth } from "@clerk/nextjs/server";
 import { SimpleSidebar } from "../components/Sidebar";
 
 export default function Home(props) {
@@ -30,10 +21,15 @@ export default function Home(props) {
     return null;
   }
 
+  // sort notes by updated_at in descending order
+  props.notes.sort((a, b) => {
+    return new Date(b.updated_at) - new Date(a.updated_at);
+  });
+
   return (
     <>
       <Head>
-        <title>Markdown Parser</title>
+        <title>All Notes | Markdown Parser</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -47,7 +43,11 @@ export default function Home(props) {
             .
           </Heading>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mt={8}>
+          <Heading fontWeight="bolder" size="md" mt={8} color="blue.600">
+            All Notes <Text as="span">({props.notes.length})</Text>
+          </Heading>
+
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mt={4}>
             {props.notes.map((note) => (
               <Link
                 key={note._id}

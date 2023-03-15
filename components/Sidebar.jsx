@@ -14,20 +14,14 @@ import {
   BoxProps,
   FlexProps,
 } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-} from "react-icons/fi";
+import { FiHome, FiMenu } from "react-icons/fi";
+import { MdOutlineNotes, MdOutlineEditNote } from "react-icons/md";
 import { UserButton } from "@clerk/nextjs";
 
 const LinkItems = [
   { name: "Home", icon: FiHome, href: "/" },
-  { name: "All Notes", icon: FiTrendingUp, href: "/all" },
-  { name: "New Note", icon: FiCompass, href: "/new" },
+  { name: "All Notes", icon: MdOutlineNotes, href: "/all" },
+  { name: "New Note", icon: MdOutlineEditNote, href: "/new" },
 ];
 
 export function SimpleSidebar({ children }) {
@@ -53,7 +47,7 @@ export function SimpleSidebar({ children }) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, md: 72 }} p="4">
         {children}
       </Box>
     </Box>
@@ -66,16 +60,21 @@ const SidebarContent = ({ onClose, ...rest }) => {
       bg={useColorModeValue("white", "gray.900")}
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
+      w={{ base: "full", md: 72 }}
       pos="fixed"
       h="full"
       {...rest}
     >
-      <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          MP
-        </Text>
-        <UserButton />
+      <Flex h="32" alignItems="center" mx="8" justifyContent="space-between">
+        <Box>
+          <Text fontSize="2xl" fontWeight="bold">
+            Markdown Parser
+          </Text>
+
+          <Flex alignItems="center" mt={2}>
+            <Text mr={2}>Signed in as</Text> <UserButton />
+          </Flex>
+        </Box>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -106,7 +105,7 @@ const NavItem = ({ icon, children, ...rest }) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: "cyan.400",
+          bg: "blue.400",
           color: "white",
         }}
         {...rest}
@@ -130,7 +129,7 @@ const NavItem = ({ icon, children, ...rest }) => {
 const MobileNav = ({ onOpen, ...rest }) => {
   return (
     <Flex
-      ml={{ base: 0, md: 60 }}
+      ml={{ base: 0, md: 72 }}
       px={{ base: 4, md: 24 }}
       height="20"
       alignItems="center"
@@ -147,8 +146,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
 
-      <Text fontSize="2xl" ml="8" fontFamily="monospace" fontWeight="bold">
-        MP
+      <Text fontSize="2xl" ml="8" fontWeight="bold">
+        Markdown Parser
       </Text>
     </Flex>
   );

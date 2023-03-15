@@ -1,23 +1,24 @@
-import ReactMarkdown from "react-markdown";
+import Head from "next/head";
 import clientPromise from "../../lib/mongodb";
-import { useRouter } from "next/router";
-import {
-  CustomHeading1,
-  CustomHeading2,
-  CustomHeading3,
-  CustomImage,
-  CustomParagraph,
-  CustomCode,
-} from "../../components/MDXComponents";
 import { Container } from "@chakra-ui/react";
-import { Footer } from "../../components/Footer";
-import { Components } from "../../components/MDXComponents";
+// import { Components } from "../../components/MDXComponents";
+import { Heading, Text } from "@chakra-ui/react";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import dynamic from "next/dynamic";
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
-export default function Note({ mdxString }) {
+export default function Note({ title, updated_at, mdxString }) {
   return (
     <>
-      <Container maxW="container.xl">
-        <ReactMarkdown components={Components}>{mdxString}</ReactMarkdown>
+      <Head>
+        <title>{title + " | Markdown Parser"}</title>
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </Head>
+      <Container maxW="container.xl" p={4}>
+        <Heading>{title}</Heading>
+        <Text my={4}>Last Updated: {updated_at}</Text>
+        <MDEditor value={mdxString} data-color-mode="light" preview="preview" />
       </Container>
     </>
   );
@@ -41,9 +42,11 @@ export async function getServerSideProps(context) {
       .toArray();
 
     const data = allData[0];
-
+    console.log(data);
     return {
       props: {
+        title: data.title,
+        updated_at: data.updated_at.toLocaleDateString(),
         mdxString: data.content,
         success: true,
       },

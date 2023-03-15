@@ -87,7 +87,14 @@ export default function Note({ mdxString, noteTitle }) {
               my={4}
             />
 
-            <Button onClick={onShare} bg="blue.400" color="white">
+            <Button
+              onClick={onShare}
+              bg="blue.400"
+              color="white"
+              _hover={{
+                bg: "blue.600",
+              }}
+            >
               <Text>Share Note</Text>
             </Button>
           </Flex>

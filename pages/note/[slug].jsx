@@ -1,6 +1,8 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+
 import clientPromise from "../../lib/mongodb";
-import { Container } from "@chakra-ui/react";
+import { Button, Container, Flex } from "@chakra-ui/react";
 // import { Components } from "../../components/MDXComponents";
 import { Heading, Text } from "@chakra-ui/react";
 import "@uiw/react-md-editor/markdown-editor.css";
@@ -9,6 +11,9 @@ import dynamic from "next/dynamic";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function Note({ title, updated_at, mdxString }) {
+  const router = useRouter();
+
+  console.log(router.query);
   return (
     <>
       <Head>
@@ -16,9 +21,24 @@ export default function Note({ title, updated_at, mdxString }) {
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <Container maxW="container.xl" p={4}>
-        <Heading>{title}</Heading>
+        <Flex justify="space-between" alignItems="center">
+          <Heading>{title}</Heading>
+          <Button
+            mt={4}
+            colorScheme="blue"
+            as="a"
+            href={"/note/" + router.query.slug + "/edit"}
+          >
+            Edit Note
+          </Button>
+        </Flex>
         <Text my={4}>Last Updated: {updated_at}</Text>
-        <MDEditor value={mdxString} data-color-mode="light" preview="preview" />
+        <MDEditor
+          value={mdxString}
+          data-color-mode="light"
+          preview="preview"
+          height="80vh"
+        />
       </Container>
     </>
   );
@@ -42,7 +62,6 @@ export async function getServerSideProps(context) {
       .toArray();
 
     const data = allData[0];
-    console.log(data);
     return {
       props: {
         title: data.title,

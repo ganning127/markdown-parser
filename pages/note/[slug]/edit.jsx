@@ -1,22 +1,15 @@
-import ReactMarkdown from "react-markdown";
 import clientPromise from "../../../lib/mongodb";
 import { useRouter } from "next/router";
-import {
-  CustomHeading1,
-  CustomHeading2,
-  CustomHeading3,
-  CustomImage,
-  CustomParagraph,
-  CustomCode,
-} from "../../../components/MDXComponents";
-import { Components } from "../../../components/MDXComponents";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import {
   Box,
   Container,
   SimpleGrid,
-  Textarea,
-  Heading,
   Text,
   Flex,
   Button,
@@ -29,16 +22,8 @@ import {
   Input,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { SimpleSidebar } from "../../../components/Sidebar";
-import { Footer } from "../../../components/Footer";
 
 export default function Note({ mdxString, noteTitle }) {
   const [content, setContent] = useState(mdxString);
@@ -86,42 +71,49 @@ export default function Note({ mdxString, noteTitle }) {
       <SimpleSidebar>
         <Container maxW="container.2xl">
           <Flex alignItems="center" justifyContent="space-between">
-            <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
+            {/* <Heading fontWeight="black" textAlign="center" size="2xl" my={4}>
               Markdown Editor
-            </Heading>
+            </Heading> */}
+
+            <Input
+              placeholder="Untitled Note"
+              value={title}
+              fontWeight="black"
+              // textAlign="center"
+              // size="2xl"
+              maxW="300px"
+              onChange={(e) => setTitle(e.target.value)}
+              size="lg"
+              my={4}
+            />
 
             <Button onClick={onShare} bg="blue.400" color="white">
-              <Text mr={4}>Share Note</Text>
-              <UserButton />
+              <Text>Share Note</Text>
             </Button>
           </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} height="100vh">
+          <SimpleGrid columns={{ base: 1, md: 1 }} spacing={10} height="100vh">
             <Box>
-              <Input
-                placeholder="Untitled Note"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                size="lg"
-                mb={4}
+              <MDEditor
+                value={content}
+                onChange={setContent}
+                data-color-mode="light"
+                preview="live"
+                height="80vh"
               />
-              <Textarea
+
+              {/* <Textarea
                 value={content}
                 rounded="md"
                 height="100vh"
                 placeholder="# type your markdown here"
                 onChange={(e) => setContent(e.target.value)}
-              />
-            </Box>
-            <Box>
-              <ReactMarkdown components={Components}>
-                {content ? content : "preview will appear here"}
-              </ReactMarkdown>
+              /> */}
             </Box>
           </SimpleGrid>
         </Container>
       </SimpleSidebar>
 
-      <Footer />
+      {/* <Footer /> */}
 
       {/* SHARE BUTTON */}
       <Modal isOpen={isOpen} onClose={onClose}>

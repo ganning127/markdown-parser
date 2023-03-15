@@ -8,8 +8,6 @@ import {
   Box,
   Container,
   SimpleGrid,
-  Textarea,
-  Heading,
   Text,
   Flex,
   Button,
@@ -24,16 +22,7 @@ import {
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDisclosure } from "@chakra-ui/react";
-import { Components } from "../components/MDXComponents";
-import { Footer } from "../components/Footer";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import { SimpleSidebar } from "../components/Sidebar";
 
@@ -111,7 +100,8 @@ export default function Home() {
                 value={content}
                 onChange={setContent}
                 data-color-mode="light"
-                preview="edit"
+                preview="live"
+                height="80vh"
               />
 
               {/* <Textarea
@@ -126,7 +116,7 @@ export default function Home() {
         </Container>
       </SimpleSidebar>
 
-      <Footer />
+      {/* <Footer /> */}
 
       {/* SHARE BUTTON */}
       <Modal isOpen={isOpen} onClose={onClose}>

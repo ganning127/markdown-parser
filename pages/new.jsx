@@ -16,20 +16,22 @@ import {
   ModalContent,
   ModalBody,
   ModalCloseButton,
+  Select,
   Spinner,
   Input,
+  HStack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useDisclosure } from "@chakra-ui/react";
 import { useUser } from "@clerk/nextjs";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
 import { SimpleSidebar } from "../components/Sidebar";
 
 export default function Home() {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [visibility, setVisibility] = useState("public");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isLoaded, isSignedIn, user } = useUser();
 
@@ -42,11 +44,20 @@ export default function Home() {
     if (noteTitle === "") {
       noteTitle = "Untitled Note";
     }
+
+    let noteVisibility = visibility;
+
+    if (noteVisibility === "") {
+      noteVisibility = "public";
+    }
+
     const data = {
       content: content,
       owner: user.id,
       title: noteTitle,
+      visibility: noteVisibility,
     };
+
     const options = {
       method: "POST",
       headers: {
@@ -90,16 +101,28 @@ export default function Home() {
               my={4}
             />
 
-            <Button
-              onClick={onShare}
-              bg="blue.400"
-              color="white"
-              _hover={{
-                bg: "blue.600",
-              }}
-            >
-              <Text>Share Note</Text>
-            </Button>
+            <HStack>
+              <Select
+                placeholder="Visibility"
+                onChange={(e) => setVisibility(e.target.value)}
+                value={visibility}
+              >
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </Select>
+
+              <Button
+                onClick={onShare}
+                bg="blue.400"
+                color="white"
+                _hover={{
+                  bg: "blue.600",
+                }}
+                px={8}
+              >
+                <Text>Share Note</Text>
+              </Button>
+            </HStack>
           </Flex>
           <SimpleGrid columns={{ base: 1, md: 1 }} spacing={10} height="100vh">
             <Box>

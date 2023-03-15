@@ -2,18 +2,40 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import clientPromise from "../../lib/mongodb";
-import { Button, Container, Flex } from "@chakra-ui/react";
+import { Button, Container, Flex, Link } from "@chakra-ui/react";
 // import { Components } from "../../components/MDXComponents";
 import { Heading, Text } from "@chakra-ui/react";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import dynamic from "next/dynamic";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+import { getAuth } from "@clerk/nextjs/server";
 
-export default function Note({ title, updated_at, mdxString }) {
+export default function Note({ title, updated_at, mdxString, success }) {
   const router = useRouter();
 
-  console.log(router.query);
+  if (!success) {
+    return (
+      <>
+        <Head>
+          <title>Uh oh!</title>
+          <link rel="shortcut icon" href="/favicon.ico" />
+        </Head>
+        <Container maxW="container.xl" p={4}>
+          <Heading my={4}>Argh! Something went wrong.</Heading>
+          <Text>
+            Either you don&apos;t have access to this page, or it doesn&apos;t
+            exist. Try going back to the{" "}
+            <Link href="/" color="blue.400">
+              home page
+            </Link>
+            .
+          </Text>
+        </Container>
+      </>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -45,14 +67,14 @@ export default function Note({ title, updated_at, mdxString }) {
   );
 }
 
-export async function getServerSideProps(context) {
+export const getServerSideProps = async (context) => {
   try {
+    const { userId } = await getAuth(context.req);
     const slug = context.params.slug;
-
     const client = await clientPromise;
-
     const db = await client.db("markdown-parser");
     const collection = await db.collection("notes");
+    let access = false;
 
     // get data from database about carbon monoxide
     const allData = await collection
@@ -63,6 +85,20 @@ export async function getServerSideProps(context) {
       .toArray();
 
     const data = allData[0];
+
+    if (data.visibility != "public") {
+      console.log(data.owner, userId);
+      if (data.owner == userId) {
+        access = true;
+      } else {
+        return {
+          props: {
+            success: false,
+          },
+        };
+      }
+    }
+
     return {
       props: {
         title: data.title,
@@ -77,4 +113,4 @@ export async function getServerSideProps(context) {
       props: { success: false },
     };
   }
-}
+};

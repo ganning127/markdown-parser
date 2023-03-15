@@ -95,7 +95,7 @@ export default function Note({ mdxString, noteTitle }) {
                 bg: "blue.600",
               }}
             >
-              <Text>Share Note</Text>
+              <Text>Publish Note</Text>
             </Button>
           </Flex>
           <SimpleGrid columns={{ base: 1, md: 1 }} spacing={10} height="100vh">

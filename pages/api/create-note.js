@@ -25,6 +25,7 @@ export default async function handler(req, res) {
     created_at: new Date(),
     updated_at: new Date(),
     owner: req.body.owner,
+    visibility: req.body.visibility,
   });
 
   res.status(200).json({ url: slug });

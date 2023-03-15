@@ -13,7 +13,7 @@ import { Footer } from "../components/Footer";
 import { useUser } from "@clerk/nextjs";
 import { getAuth } from "@clerk/nextjs/server";
 import { SimpleSidebar } from "../components/Sidebar";
-
+import { NoteCard } from "../components/NoteCard";
 export default function Home(props) {
   const { isLoaded, isSignedIn, user } = useUser();
 
@@ -49,35 +49,16 @@ export default function Home(props) {
 
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mt={4}>
             {props.notes.map((note) => (
-              <Link
+              <NoteCard
                 key={note._id}
-                href={`/note/${note.slug}`}
-                _hover={{}}
-                isExternal
-              >
-                <Box
-                  py={3}
-                  px={5}
-                  shadow="md"
-                  borderWidth="1px"
-                  borderRadius="md"
-                  _hover={{
-                    bg: "blue.50",
-                  }}
-                >
-                  <Flex justifyContent="space-between" alignItems="center">
-                    <Heading size="md" fontWeight="black">
-                      {note.title}
-                    </Heading>
-
-                    <Text color="gray.400" my={2}>
-                      {new Date(note.updated_at).toLocaleString()}
-                    </Text>
-                  </Flex>
-
-                  {note.content.slice(0, 50)}
-                </Box>
-              </Link>
+                _id={note._id}
+                slug={note.slug}
+                title={note.title}
+                updated_at={note.updated_at}
+                content={note.content}
+                noteOwner={note.owner}
+                reqOwner={props.owner}
+              />
             ))}
           </SimpleGrid>
         </Container>
@@ -116,6 +97,7 @@ export const getServerSideProps = async ({ req }) => {
       props: {
         notes: data,
         success: true,
+        owner: userId,
       },
     };
   } catch (e) {

@@ -19,6 +19,7 @@ export default function Note({ title, updated_at, mdxString }) {
       <Head>
         <title>{title + " | Markdown Parser"}</title>
         <link rel="shortcut icon" href="/favicon.ico" />
+        <meta name="description" content={mdxString} />
       </Head>
       <Container maxW="container.xl" p={4}>
         <Flex justify="space-between" alignItems="center">

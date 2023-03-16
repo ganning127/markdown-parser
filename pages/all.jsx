@@ -44,7 +44,7 @@ export default function Home(props) {
           </Heading>
 
           <Heading fontWeight="bolder" size="md" mt={8} color="blue.600">
-            All Notes <Text as="span">({props.notes.length})</Text>
+            Recently Edited <Text as="span">({props.notes.length})</Text>
           </Heading>
 
           <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10} mt={4}>
@@ -58,6 +58,7 @@ export default function Home(props) {
                 content={note.content}
                 noteOwner={note.owner}
                 reqOwner={props.owner}
+                visibility={note.visibility}
               />
             ))}
           </SimpleGrid>

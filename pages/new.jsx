@@ -120,7 +120,7 @@ export default function Home() {
                 }}
                 px={8}
               >
-                <Text>Share Note</Text>
+                <Text>Publish Note</Text>
               </Button>
             </HStack>
           </Flex>

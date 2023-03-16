@@ -11,7 +11,14 @@ import dynamic from "next/dynamic";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 import { getAuth } from "@clerk/nextjs/server";
 
-export default function Note({ title, updated_at, mdxString, success }) {
+export default function Note({
+  visibility,
+  title,
+  updated_at,
+  mdxString,
+  success,
+  views,
+}) {
   const router = useRouter();
 
   if (!success) {
@@ -45,7 +52,7 @@ export default function Note({ title, updated_at, mdxString, success }) {
       </Head>
       <Container maxW="container.xl" p={4}>
         <Flex justify="space-between" alignItems="center">
-          <Heading>{title}</Heading>
+          <Heading color="blue.400">{title}</Heading>
           <Button
             mt={4}
             colorScheme="blue"
@@ -55,7 +62,14 @@ export default function Note({ title, updated_at, mdxString, success }) {
             Edit Note
           </Button>
         </Flex>
-        <Text my={4}>Last Updated: {updated_at}</Text>
+        <Text my={4}>
+          {visibility === "public" && (
+            <>
+              <b>{views} views</b> {"  •  "}
+            </>
+          )}{" "}
+          Note Updated: {updated_at}
+        </Text>
         <MDEditor
           value={mdxString}
           data-color-mode="light"
@@ -74,6 +88,7 @@ export const getServerSideProps = async (context) => {
     const client = await clientPromise;
     const db = await client.db("markdown-parser");
     const collection = await db.collection("notes");
+    let views = 0;
     let access = false;
 
     // get data from database about carbon monoxide
@@ -97,6 +112,16 @@ export const getServerSideProps = async (context) => {
           },
         };
       }
+    } else {
+      views = data.views;
+      await collection.updateOne(
+        { slug: slug },
+        {
+          $set: {
+            views: views + 1,
+          },
+        }
+      );
     }
 
     return {
@@ -105,6 +130,8 @@ export const getServerSideProps = async (context) => {
         updated_at: data.updated_at.toLocaleDateString(),
         mdxString: data.content,
         success: true,
+        views: views,
+        visibility: data.visibility,
       },
     };
   } catch (error) {

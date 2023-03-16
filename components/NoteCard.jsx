@@ -6,6 +6,7 @@ import {
   Text,
   IconButton,
   Spinner,
+  Badge,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
@@ -18,6 +19,7 @@ export const NoteCard = ({
   content,
   noteOwner,
   reqOwner,
+  visibility,
 }) => {
   const [display, setDisplay] = useState("block");
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,29 @@ export const NoteCard = ({
     setLoading(false);
   };
 
+  let displayStr = "";
+  let date = new Date(updated_at);
+  let today = new Date();
+  let diff = today - date;
+
+  let seconds = Math.floor(diff / 1000);
+  let minutes = Math.floor(seconds / 60);
+  let hours = Math.floor(minutes / 60);
+  let days = Math.floor(hours / 24);
+
+  console.log(days, hours, minutes, seconds);
+  if (days > 1) {
+    displayStr = `${days} days ago`;
+  } else if (hours > 1) {
+    displayStr = `${hours} hours ago`;
+  } else if (minutes > 1) {
+    displayStr = `${minutes} minutes ago`;
+  } else {
+    displayStr = `${seconds} seconds ago`;
+  }
+
+  console.log(diff);
+
   return (
     <>
       <Box>
@@ -68,6 +93,10 @@ export const NoteCard = ({
               <Heading size="md" fontWeight="black">
                 {title}
               </Heading>
+
+              <Badge colorScheme={visibility === "public" ? "blue" : "purple"}>
+                {visibility}
+              </Badge>
             </Flex>
 
             <Text>{content.slice(0, 50)}</Text>
@@ -75,7 +104,7 @@ export const NoteCard = ({
 
           <Flex justifyContent="space-between" alignItems="center">
             <Text color="gray.400" my={2}>
-              {new Date(updated_at).toLocaleString()}
+              {displayStr}
             </Text>
 
             <IconButton
